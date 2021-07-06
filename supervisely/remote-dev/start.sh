@@ -5,7 +5,6 @@
 # -v ~/max:/workdir
 
 docker build -t supervisely/mmdetection3d:1.0.0 . && \
-cp /root/.ssh/authorized_keys . && \
 docker-compose build && \
 docker-compose up -d && \
 docker-compose ps
