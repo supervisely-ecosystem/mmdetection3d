@@ -1,24 +1,24 @@
 from dotenv import dotenv_values
 
+from mmdet3d.apis import inference_detector, init_model
+
 config = {
     **dotenv_values(".env"),  # load shared development variables
     **dotenv_values(".env.secret")  # load sensitive variables
 }
 
 import os
-for k,v in config.items():
-    os.environ[k] = v
 
+for k, v in config.items():
+    os.environ[k] = v
 
 import logging
 import os
-
+import mmcv
 import numpy as np
 import supervisely_lib as sly
 from supervisely_lib.geometry.cuboid_3d import Cuboid3d, Vector3d
 from supervisely_lib.pointcloud_annotation.pointcloud_object_collection import PointcloudObjectCollection
-
-from inference import predict, decode_prediction
 
 logger = logging.getLogger()
 
@@ -52,12 +52,11 @@ class UploadAPI:
 
 class Annotation:
     @staticmethod
-    def pred_to_sly_geometry(labels, reverse=True):
+    def pred_to_sly_geometry(labels, reverse=False):
         geometry = []
-
         for l in labels:
             x, y, z, dx, dy, dz, heading = l
-            position = Vector3d(float(x), float(y), float(z))
+            position = Vector3d(float(x), float(y), float(z * 0.5))
 
             if reverse:
                 yaw = float(heading) - np.pi
@@ -99,17 +98,66 @@ class Annotation:
         return pc_annotation
 
 
+def decode_prediction(result, labels, score_thr, valid_labels=[]):
+    if 'pts_bbox' in result[0].keys():
+        pred_bboxes = result[0]['pts_bbox']['boxes_3d'].tensor.numpy()
+        pred_scores = result[0]['pts_bbox']['scores_3d'].numpy()
+        pred_labels = result[0]['pts_bbox']['labels_3d'].numpy()
+    else:
+        pred_bboxes = result[0]['boxes_3d'].tensor.numpy()
+        pred_scores = result[0]['scores_3d'].numpy()
+        pred_labels = result[0]['labels_3d'].numpy()
+    # filter out low score bboxes for visualization
+    if score_thr > 0:
+        inds = pred_scores > score_thr
+        pred_bboxes = pred_bboxes[inds]
+        pred_labels = pred_labels[inds]
+        pred_scores = pred_scores[inds]
+
+    pred_bboxes = pred_bboxes[:, :7]  # x, y, z, x_size, y_size, z_size, yaw
+
+    labels = [labels[x] for x in pred_labels]  # convert int labels to str
+    if any(valid_labels):
+        mask = [l in ok_labels for l in labels]  # filter classes that dataset meta doesnt contain
+        labels = np.array(labels)[mask]
+        pred_scores = pred_scores[mask]
+        pred_bboxes = pred_bboxes[mask]
+
+    return pred_bboxes, pred_scores, labels
+
+
 if __name__ == "__main__":
+    # SECOND SecFPN [car]
+    # config = "/mmdetection3d/configs/second/hv_second_secfpn_6x8_80e_kitti-3d-car.py"
+    # checkpoint = "/data/hv_second_secfpn_6x8_80e_kitti-3d-car_20200620_230238-393f000c.pth"
 
+    # SECOND SecFPN [3 classes]
+    config = "/mmdetection3d/configs/second/hv_second_secfpn_6x8_80e_kitti-3d-3class.py"
+    checkpoint = "/data/hv_second_secfpn_6x8_80e_kitti-3d-3class_20200620_230238-9208083a.pth"
+
+    # CenterPoint not implemented yet
+    # config = "/mmdetection3d/configs/centerpoint/centerpoint_01voxel_second_secfpn_dcn_circlenms_4x8_cyclic_20e_nus.py"
+    # checkpoint = "/data/centerpoint_01voxel_second_secfpn_circlenms_4x8_cyclic_20e_nus_20201001_135205-5db91e00.pth"
+
+    # PointPillars SecFPN [car]
+    # config = "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_kitti-3d-car.py"
+    # checkpoint = "/data/hv_pointpillars_secfpn_6x8_160e_kitti-3d-car_20200620_230614-77663cd6.pth"
+
+    # PointPillars SecFPN [3 classes]
+    # config = "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_kitti-3d-3class.py"
+    # checkpoint = "/data/hv_pointpillars_secfpn_6x8_160e_kitti-3d-3class_20200620_230421-aa0f3adb.pth"
+
+    ok_labels = ['Car', 'Cyclist', 'Pedestrian']
     name_of_pc = "000016.pcd"
-    cfg_file = 'cfgs/kitti_models/pv_rcnn.yaml'
-    ckpt = "/app/checkpoints/pv_rcnn_8369.pth"
-
     up = UploadAPI(project_id=5268, ds_name="pointcloud")
     fpath = up.download_cloud(name_of_pc)
 
-    res = predict(cfg_file, ckpt, fpath, '.pcd')
-    bboxes, scores, labels = decode_prediction(res, thresh=0.8)
+    model = init_model(config, checkpoint)
+    labels = mmcv.Config.fromfile(config)['class_names']
+
+    result, data = inference_detector(model, fpath)
+
+    bboxes, scores, labels = decode_prediction(result, labels, score_thr=0.5)
 
     annotation = Annotation.create_annotation(bboxes, labels)
     up.upload_annotation(annotation)
