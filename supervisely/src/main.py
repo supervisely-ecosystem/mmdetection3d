@@ -12,7 +12,7 @@ def download_dataset():
 
 if __name__ == '__main__':
     # 1. download dataset
-    # download_dataset()
+    download_dataset()
 
-    pass
+
 

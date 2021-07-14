@@ -2,7 +2,6 @@ import copy
 import os
 
 import numpy as np
-import torch
 from mmdet.datasets import DATASETS
 
 from .custom_3d import Custom3DDataset
@@ -41,7 +40,7 @@ class SuperviselyDataset(Custom3DDataset):
         pcd_limit_range (list): The range of point cloud used to filter
             invalid predicted boxes. Default: [0, -40, -3, 70.4, 40, 0.0].
     """
-    CLASSES = ('Car', 'Pedestrian', 'Cyclist')
+
 
     def __init__(self,
                  data_root,
@@ -55,22 +54,28 @@ class SuperviselyDataset(Custom3DDataset):
                  filter_empty_gt=True,
                  test_mode=False,
                  pcd_limit_range=[0, -40, -3, 70.4, 40, 0.0]):
+
+        self.split = split
+        self.root_split = os.path.join(data_root, split)
+
+        self.data = np.load(os.path.join(self.root_split, ann_file), allow_pickle=True)
+        self.modality = modality
+        assert self.modality is not None
+        self.pcd_limit_range = pcd_limit_range
+        self.pts_prefix = pts_prefix
+        CLASSES = ('Car', 'Pedestrian', 'Cyclist', 'DontCare')
+
         super().__init__(
             data_root=data_root,
             ann_file=ann_file,
             pipeline=pipeline,
-            classes=classes,
+            classes=CLASSES,
             modality=modality,
             box_type_3d=box_type_3d,
             filter_empty_gt=filter_empty_gt,
             test_mode=test_mode)
 
-        self.split = split
-        self.root_split = os.path.join(self.data_root, split)
-        self.data = np.load(os.path.join(self.root_split, ann_file), allow_pickle=True)
-        assert self.modality is not None
-        self.pcd_limit_range = pcd_limit_range
-        self.pts_prefix = pts_prefix
+
 
     def _get_pts_filename(self, idx):
         """Get point cloud filename according to the given index.
@@ -102,12 +107,10 @@ class SuperviselyDataset(Custom3DDataset):
                     from lidar to different cameras.
                 - ann_info (dict): Annotation info.
         """
-        info = self.data_infos[index]
-        sample_idx = info['image']['image_idx']
 
-        pts_filename = self._get_pts_filename(sample_idx)
+        pts_filename = self._get_pts_filename(index)
         input_dict = dict(
-            sample_idx=sample_idx,
+            sample_idx=index,
             pts_filename=pts_filename,
             img_prefix=None,
             img_info=None,
@@ -118,6 +121,9 @@ class SuperviselyDataset(Custom3DDataset):
             input_dict['ann_info'] = annos
 
         return input_dict
+
+    def load_annotations(self, ann_file):
+        return np.load(os.path.join(self.root_split, ann_file), allow_pickle=True)
 
     def get_ann_info(self, index):
         """Get annotation info according to the given index.
@@ -138,9 +144,10 @@ class SuperviselyDataset(Custom3DDataset):
 
         gt_bboxes_3d = self.data[1][index]
         gt_names = self.data[2][index]
-        gt_labels = [self.CLASSES[x] for x in gt_names]
+        classes = {v: k for k, v in enumerate(self.CLASSES)}
+        gt_labels = [classes[x] for x in gt_names]
 
-        gt_bboxes_3d = LiDARInstance3DBoxes(torch.tensor(gt_bboxes_3d))
+        gt_bboxes_3d = LiDARInstance3DBoxes(gt_bboxes_3d)
 
         gt_labels = np.array(gt_labels).astype(np.int64)
         gt_labels_3d = copy.deepcopy(gt_labels)
@@ -199,3 +206,27 @@ class SuperviselyDataset(Custom3DDataset):
         if self.modality['use_camera']:
             pipeline.insert(0, dict(type='LoadImageFromFile'))
         return Compose(pipeline)
+
+    def prepare_train_data(self, index):
+        """Training data preparation.
+
+        Args:
+            index (int): Index for accessing the target data.
+
+        Returns:
+            dict: Training data dict of the corresponding index.
+        """
+        input_dict = self.get_data_info(index)
+        if input_dict is None:
+            return None
+        self.pre_pipeline(input_dict)
+        example = self.pipeline(input_dict)
+        example['points'] = [example['points'].tensor]
+        example['gt_bboxes_3d'] = [example['gt_bboxes_3d'].tensor]
+
+        if self.filter_empty_gt and \
+                (example is None or
+                    ~(example['gt_labels_3d'] != -1).any()):
+            return None
+        return example
+
