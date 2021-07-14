@@ -66,8 +66,8 @@ class SuperviselyDataset(Custom3DDataset):
             test_mode=test_mode)
 
         self.split = split
-        self.data = np.load(ann_file, allow_pickle=True)
         self.root_split = os.path.join(self.data_root, split)
+        self.data = np.load(os.path.join(self.root_split, ann_file), allow_pickle=True)
         assert self.modality is not None
         self.pcd_limit_range = pcd_limit_range
         self.pts_prefix = pts_prefix
