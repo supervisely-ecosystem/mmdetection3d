@@ -132,3 +132,4 @@ data/sunrgbd/OFFICIAL_SUNRGBD/
 .env.secret
 # Waymo evaluation
 mmdet3d/core/evaluation/waymo_utils/compute_detection_metrics_main
+secret_debug.env

@@ -61,7 +61,7 @@ data = dict(
     workers_per_gpu=4,
     train=dict(pipeline=train_pipeline, classes=class_names),
     val=dict(pipeline=test_pipeline, classes=class_names),
-    test=dict(pipeline=test_pipeline, classes=class_names))
+    test=dict(pipeline=test_pipeline, classes=class_names, box_type_3d='LiDAR'))
 
 # model settings
 model = dict(
