@@ -3,12 +3,12 @@ services:
   mmdetection3d:
     shm_size: '20gb'
     runtime: 'nvidia'
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-dev
       args:
-        IMAGE: supervisely/mmdetection3d:1.0.0
+        IMAGE: mmdet3d_py38:1.0.0
     ports:
-      - "5555:22"
+      - "5554:22"
     volumes:
       - "./data:/data"

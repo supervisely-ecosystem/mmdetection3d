@@ -1,7 +1,6 @@
 import os
-import open3d.ml as _ml3d
 from mmdet3d.apis import inference_detector, init_model
-
+import numpy as np
 import supervisely_lib as sly
 from supervisely_lib.geometry.cuboid_3d import Cuboid3d, Vector3d
 from supervisely_lib.pointcloud_annotation.pointcloud_object_collection import PointcloudObjectCollection
