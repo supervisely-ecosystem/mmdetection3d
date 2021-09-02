@@ -12,10 +12,13 @@ RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN conda install -c anaconda python=3.8
+
+
 # Install MMCV, MMDetection and MMSegmentation
-RUN pip install mmcv-full==1.3.8+torch1.6.0+cu101 -f https://openmmlab.oss-accelerate.aliyuncs.com/mmcv/dist/index.html
-RUN pip install mmdet==2.14.0
-RUN pip install mmsegmentation==0.14.1
+RUN pip3 install mmcv-full
+RUN pip3 install mmdet==2.14.0
+RUN pip3 install mmsegmentation==0.14.1
 
 # Install MMDetection3D
 RUN conda clean --all
@@ -23,12 +26,16 @@ RUN git clone https://github.com/supervisely-ecosystem/mmdetection3d.git /mmdete
 WORKDIR /mmdetection3d
 RUN git checkout sly
 ENV FORCE_CUDA="1"
-RUN pip install -r requirements/build.txt
-RUN pip install --no-cache-dir -e .
+RUN pip3 install -r requirements/build.txt
+RUN pip3 install --no-cache-dir -e .
 
 # uninstall pycocotools installed by nuscenes-devkit and reinstall mmpycocotools
-RUN pip uninstall pycocotools --no-cache-dir -y
-RUN pip install mmpycocotools --no-cache-dir --force --no-deps
+RUN pip3 uninstall pycocotools --no-cache-dir -y
+RUN pip3 install mmpycocotools --no-cache-dir --force --no-deps
 
-RUN pip install --ignore-installed PyYAML
-RUN pip install open3d
+RUN pip3 install --ignore-installed PyYAML
+RUN pip3 install open3d
+RUN pip3 install supervisely
+
+RUN ln -s /opt/conda/bin/python3 /usr/local/bin/python
+RUN ln -s /opt/conda/bin/pip3 /usr/local/bin/pip
