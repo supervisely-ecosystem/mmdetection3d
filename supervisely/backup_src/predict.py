@@ -95,8 +95,9 @@ if __name__ == "__main__":
     # checkpoint = "/data/hv_second_secfpn_6x8_80e_kitti-3d-car_20200620_230238-393f000c.pth"
 
     # SECOND SecFPN [3 classes]
-    config = "/mmdetection3d/configs/second/hv_second_secfpn_6x8_80e_kitti-3d-3class.py"
-    checkpoint = "/data/hv_second_secfpn_6x8_80e_kitti-3d-3class_20200620_230238-9208083a.pth"
+
+    config = "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py"
+    checkpoint = "/data/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth"
 
     # CenterPoint not implemented yet
     # config = "/mmdetection3d/configs/centerpoint/centerpoint_01voxel_second_secfpn_dcn_circlenms_4x8_cyclic_20e_nus.py"
