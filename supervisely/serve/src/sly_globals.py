@@ -21,7 +21,7 @@ with open(f"/sessions/{task_id}/repo/supervisely/serve/config.json") as f:
 
 
 device = ['modal.state.device']
-os.environ['CUDA_VISIBLE_DEVICES'] = device  # set environment variable
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"  # set environment variable
 iscuda = torch.cuda.is_available()
 sly.logger.debug(f"Is cuda available: {iscuda}")
 if not iscuda:
