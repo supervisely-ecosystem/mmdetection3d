@@ -2,6 +2,7 @@ import os
 import supervisely_lib as sly
 import pathlib
 import sys
+import json
 
 my_app = sly.AppService()
 api = my_app.public_api
@@ -13,6 +14,10 @@ workspace_id = int(os.environ['context.workspaceId'])
 modelWeightsOptions = os.environ['modal.state.modelWeightsOptions']
 pretrained_weights = os.environ['modal.state.selectedModel']
 custom_weights = os.environ['modal.state.weightsPath']
+
+with open("supervisely/serve/config.json") as f:
+    pretrained_models_cfg = json.load(f)['modal_template_state']['models']
+
 
 device = 'cuda'
 

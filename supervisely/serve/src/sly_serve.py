@@ -27,8 +27,7 @@ def send_error_data(func):
 def get_weights():
     g.remote_config_path = None
     if g.modelWeightsOptions == "pretrained":
-        models = json.loads(f'{os.environ["modal.state.models"]}')
-        model_data = [x for x in models if x["Model"] == g.pretrained_weights]
+        model_data = [x for x in g.pretrained_models_cfg if x["Model"] == g.pretrained_weights][0]
         g.local_config_path = model_data["config"]
         g.remote_weights_path = model_data["weightsPath"]
 
