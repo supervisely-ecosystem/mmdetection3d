@@ -29,7 +29,7 @@ def get_weights():
     g.remote_config_path = None
 
     if g.modelWeightsOptions == "pretrained":
-        model_data = [x for x in os.environ["state.models"] if x["Model"] == g.pretrained_weights][0]
+        model_data = [x for x in os.environ["modal.state.models"] if x["Model"] == g.pretrained_weights][0]
         g.local_config_path = model_data["config"]
         g.remote_weights_path = model_data["weightsPath"]
 
