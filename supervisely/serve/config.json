@@ -18,16 +18,15 @@
     "models": [
         {
             "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py",
-            "weightsUrl": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
-            "Model": "SSN [Lyft]",
+            "weightsPath": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
+            "Model": "SSN [Lyft - all classes]",
             "Mem (GB)": 12.2
         },
         {
-            "config": "",
-            "weightsUrl": "",
-            "Model": "YOLOv5m",
-            "Mem (GB)": 12.2
-
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-car_20200901_204315-302fc3e7.pth",
+            "Model": "PointPillars [Waymo - Car]",
+            "Mem (GB)": 7.76
         }
     ],
     "modelColumns": [
