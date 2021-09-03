@@ -1,0 +1,49 @@
+{
+  "name": "Serve MMDet3D",
+  "type": "app",
+  "categories": [
+    "MMDetection3D",
+    "neural network",
+    "detection"
+  ],
+  "description": "Deploy model as REST API service",
+  "docker_image": "supervisely/base-pytorch:6.0.22",
+  "main_script": "supervisely/serve/src/sly_serve.py",
+  "modal_template": "supervisely/serve/src/modal.html",
+  "modal_width": 700,
+  "modal_template_state": {
+    "modelWeightsOptions": "pretrained",
+    "selectedModel": "SSN [Lyft]",
+    "device": "0",
+    "weightsPath": "",
+    "models": [
+        {
+            "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py",
+            "weightsUrl": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
+            "Model": "SSN [Lyft]",
+            "Mem (GB)": 12.2
+        },
+        {
+            "config": "",
+            "weightsUrl": "",
+            "Model": "YOLOv5m",
+            "Mem (GB)": 12.2
+
+        }
+    ],
+    "modelColumns": [
+        {"key": "Model", "title": "Model", "subtitle": null},
+        {"key": "Mem (GB)", "title": "Mem (GB)", "subtitle": null}
+    ]
+  },
+  "task_location": "application_sessions",
+  "icon": "https://i.imgur.com/2U6HufM.png",
+  "icon_cover": true,
+  "isolate": true,
+  "need_gpu": true,
+  "headless": true,
+  "instance_version": "6.4.15",
+  "session_tags": [
+    "deployed_nn"
+  ]
+}
