@@ -2,12 +2,11 @@
   "name": "Serve MMDet3D",
   "type": "app",
   "categories": [
-    "MMDetection3D",
     "neural network",
-    "detection"
+    "pointcloud"
   ],
   "description": "Deploy model as REST API service",
-  "docker_image": "supervisely/base-pytorch:6.0.22",
+  "docker_image": "docker.deepsystems.io/mmdetection3d:1.0.0",
   "main_script": "supervisely/serve/src/sly_serve.py",
   "modal_template": "supervisely/serve/src/modal.html",
   "modal_width": 700,
@@ -19,13 +18,13 @@
     "models": [
         {
             "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py",
-            "weightsPath": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
+            "weightsUrl": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
             "Model": "SSN [Lyft]",
             "Mem (GB)": 12.2
         },
         {
             "config": "",
-            "weightsPath": "",
+            "weightsUrl": "",
             "Model": "YOLOv5m",
             "Mem (GB)": 12.2
 
@@ -37,7 +36,7 @@
     ]
   },
   "task_location": "application_sessions",
-  "icon": "https://i.imgur.com/2U6HufM.png",
+  "icon": "https://img.icons8.com/ios-filled/100/000000/3d-scale.png",
   "icon_cover": true,
   "isolate": true,
   "need_gpu": true,
