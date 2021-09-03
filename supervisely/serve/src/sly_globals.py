@@ -9,7 +9,6 @@ task_id = my_app.task_id
 
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
-remote_weights_path = os.environ['modal.state.slyFile']
 
 modelWeightsOptions = os.environ['modal.state.modelWeightsOptions']
 pretrained_weights = os.environ['modal.state.selectedModel']

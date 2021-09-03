@@ -36,7 +36,7 @@
     ]
   },
   "task_location": "application_sessions",
-  "icon": "https://i.imgur.com/2U6HufM.png",
+  "icon": "https://img.icons8.com/ios-filled/100/000000/3d-scale.png",
   "icon_cover": true,
   "isolate": true,
   "need_gpu": true,

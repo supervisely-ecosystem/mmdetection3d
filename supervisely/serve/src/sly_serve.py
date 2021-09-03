@@ -9,42 +9,6 @@ import sly_globals as g
 import nn_utils
 
 
-
-@sly.timeit
-def get_weights():
-
-
-    # # download weights
-    # progress = sly.Progress("Downloading weights", 1, is_size=True, need_info_log=True)
-    # local_path = os.path.join(my_app.data_dir, "weights.pt")
-
-
-    print(g.modelWeightsOptions)
-    print(g.pretrained_weights)
-    print(g.custom_weights)
-
-    if g.modelWeightsOptions == "pretrained":
-        url = g.pretrained_weights
-        final_weights = url
-        print("final", final_weights)
-
-    # elif modelWeightsOptions == "custom":
-    #     final_weights = custom_weights
-    #     configs = os.path.join(Path(custom_weights).parents[1], 'opt.yaml')
-    #     configs_local_path = os.path.join(my_app.data_dir, 'opt.yaml')
-    #     file_info = my_app.public_api.file.get_info_by_path(TEAM_ID, custom_weights)
-    #     progress.set(current=0, total=file_info.sizeb)
-    #     my_app.public_api.file.download(TEAM_ID, custom_weights, local_path, my_app.cache, progress.iters_done_report)
-    #     my_app.public_api.file.download(TEAM_ID, configs, configs_local_path)
-    # else:
-    #     raise ValueError("Unknown weights option {!r}".format(modelWeightsOptions))
-    #
-    # # load model on device
-    # model, half, device, imgsz, stride = load_model(local_path, device=DEVICE_STR)
-    # meta = construct_model_meta(model)
-    # sly.logger.info("Model has been successfully deployed")
-
-
 def send_error_data(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -57,6 +21,41 @@ def send_error_data(func):
         return value
 
     return wrapper
+
+
+@sly.timeit
+@send_error_data
+def get_weights():
+    g.remote_config_path = None
+
+    if g.modelWeightsOptions == "pretrained":
+        model_data = [x for x in os.environ["state.models"] if x["Model"] == g.pretrained_weights][0]
+        g.local_config_path = model_data["config"]
+        g.remote_weights_path = model_data["weightsPath"]
+
+    elif g.modelWeightsOptions == "custom":
+        raise NotImplementedError
+    else:
+        raise ValueError("Unknown weights option {!r}".format(g.modelWeightsOptions))
+
+    progress = sly.Progress("Downloading weights", 1, is_size=True, need_info_log=True)
+    g.local_weights_path = os.path.join(g.my_app.data_dir, "weights.pt")
+
+    file_info = g.my_app.public_api.file.get_info_by_path(g.team_id, g.remote_weights_path)
+    progress.set(current=0, total=file_info.sizeb)
+    g.my_app.public_api.file.download(g.team_id, g.remote_weights_path,
+                                      g.local_weights_path, g.my_app.cache,
+                                      progress.iters_done_report)
+
+    sly.logger.info(f"Model {g.pretrained_weights} has been "
+                    f"successfully downloaded with weights: {g.remote_weights_path} and config {g.remote_config_path}")
+
+    sly.logger.debug(f"Local weights {g.local_weights_path}")
+    sly.logger.debug(f"Local config path {g.local_config_path}")
+    sly.logger.info("Model has been successfully downloaded")
+
+
+
 
 
 @g.my_app.callback("get_custom_inference_settings")
@@ -135,16 +134,13 @@ def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
         "context.workspaceId": g.workspace_id,
-#        "modal.state.slyFile": g.remote_weights_path,
         "device": g.device
     })
 
     get_weights()
-    exit(1)
-    nn_utils.download_model_and_configs()
+
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
-
     g.my_app.run()
 
 
