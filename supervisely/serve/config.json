@@ -19,13 +19,13 @@
     "models": [
         {
             "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py",
-            "weightsUrl": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
+            "weightsPath": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
             "Model": "SSN [Lyft]",
             "Mem (GB)": 12.2
         },
         {
             "config": "",
-            "weightsUrl": "",
+            "weightsPath": "",
             "Model": "YOLOv5m",
             "Mem (GB)": 12.2
 
