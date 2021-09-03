@@ -2,12 +2,11 @@
   "name": "Serve MMDet3D",
   "type": "app",
   "categories": [
-    "MMDetection3D",
     "neural network",
-    "detection"
+    "pointcloud"
   ],
   "description": "Deploy model as REST API service",
-  "docker_image": "supervisely/base-pytorch:6.0.22",
+  "docker_image": "docker.deepsystems.io/mmdetection3d:1.0.0",
   "main_script": "supervisely/serve/src/sly_serve.py",
   "modal_template": "supervisely/serve/src/modal.html",
   "modal_width": 700,

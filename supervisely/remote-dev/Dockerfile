@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir mmsegmentation==0.14.1
 RUN apt-get install -y git
 RUN git clone https://github.com/supervisely-ecosystem/mmdetection3d.git /mmdetection3d
 WORKDIR /mmdetection3d
-RUN git checkout sly
+#RUN git checkout sly
 
 
 

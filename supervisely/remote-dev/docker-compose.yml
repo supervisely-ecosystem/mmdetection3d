@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile-dev
       args:
-        IMAGE: mmdet3d_py38:1.0.0
+        IMAGE: docker.deepsystems.io/mmdetection3d:1.0.0
     ports:
       - "5554:22"
     volumes:
