@@ -27,8 +27,6 @@ def send_error_data(func):
 def get_weights():
     g.remote_config_path = None
     if g.modelWeightsOptions == "pretrained":
-        sly.logger.debug(os.environ["modal.state.models"])
-        sly.logger.debug("pretrained_weights:", g.pretrained_weights)
         model_data = os.environ["modal.state.models"]
         model_data = [x for x in model_data if x["Model"] == g.pretrained_weights][0]
         g.local_config_path = model_data["config"]
@@ -135,7 +133,10 @@ def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
         "context.workspaceId": g.workspace_id,
-        "device": g.device
+        "device": g.device,
+        "modelWeightsOptions": g.modelWeightsOptions,
+        "custom_weights": g.custom_weights,
+        "pretrained_weights": g.pretrained_weights
     })
 
     get_weights()
