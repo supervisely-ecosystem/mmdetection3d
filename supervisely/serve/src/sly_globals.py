@@ -15,7 +15,7 @@ modelWeightsOptions = os.environ['modal.state.modelWeightsOptions']
 pretrained_weights = os.environ['modal.state.selectedModel']
 custom_weights = os.environ['modal.state.weightsPath']
 
-with open("supervisely/serve/config.json") as f:
+with open(f"/sessions/{task_id}/repo/supervisely/serve/config.json") as f:
     pretrained_models_cfg = json.load(f)['modal_template_state']['models']
 
 

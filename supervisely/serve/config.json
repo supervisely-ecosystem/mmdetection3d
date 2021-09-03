@@ -12,7 +12,7 @@
   "modal_width": 700,
   "modal_template_state": {
     "modelWeightsOptions": "pretrained",
-    "selectedModel": "SSN [Lyft]",
+    "selectedModel": "SSN [Lyft - all classes]",
     "device": "0",
     "weightsPath": "",
     "models": [
