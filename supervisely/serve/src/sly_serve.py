@@ -12,9 +12,11 @@ import nn_utils
 
 @sly.timeit
 def get_weights():
+    g.remote_config_path = None
+
     if g.modelWeightsOptions == "pretrained":
         model_data = [x for x in os.environ["state.models"] if x["Model"] == g.pretrained_weights][0]
-        g.config_path = model_data["config"]
+        g.local_config_path = model_data["config"]
         g.remote_weights_path = model_data["weightsPath"]
 
     elif g.modelWeightsOptions == "custom":
@@ -28,11 +30,15 @@ def get_weights():
     file_info = g.my_app.public_api.file.get_info_by_path(g.team_id, g.remote_weights_path)
     progress.set(current=0, total=file_info.sizeb)
     g.my_app.public_api.file.download(g.team_id, g.remote_weights_path,
-                                    g.local_weights_path, g.my_app.cache,
-                                    progress.iters_done_report)
+                                      g.local_weights_path, g.my_app.cache,
+                                      progress.iters_done_report)
 
     sly.logger.info(f"Model {g.pretrained_weights} has been "
-                    f"successfully downloaded with weights: {g.remote_weights_path} and config {g.config_path}")
+                    f"successfully downloaded with weights: {g.remote_weights_path} and config {g.remote_config_path}")
+
+    sly.logger.debug(f"Local weights {g.local_weights_path}")
+    sly.logger.debug(f"Local config path {g.local_config_path}")
+    sly.logger.info("Model has been successfully downloaded")
 
 
 def send_error_data(func):
@@ -129,11 +135,9 @@ def main():
     })
 
     get_weights()
-    exit(1)
-    nn_utils.download_model_and_configs()
+
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
-
     g.my_app.run()
 
 
