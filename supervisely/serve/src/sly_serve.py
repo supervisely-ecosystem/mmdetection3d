@@ -9,8 +9,22 @@ import sly_globals as g
 import nn_utils
 
 
+def send_error_data(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        value = None
+        try:
+            value = func(*args, **kwargs)
+        except Exception as e:
+            request_id = kwargs["context"]["request_id"]
+            g.my_app.send_response(request_id, data={"error": repr(e)})
+        return value
+
+    return wrapper
+
 
 @sly.timeit
+@send_error_data
 def get_weights():
     g.remote_config_path = None
 
@@ -41,18 +55,7 @@ def get_weights():
     sly.logger.info("Model has been successfully downloaded")
 
 
-def send_error_data(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        value = None
-        try:
-            value = func(*args, **kwargs)
-        except Exception as e:
-            request_id = kwargs["context"]["request_id"]
-            g.my_app.send_response(request_id, data={"error": repr(e)})
-        return value
 
-    return wrapper
 
 
 @g.my_app.callback("get_custom_inference_settings")
