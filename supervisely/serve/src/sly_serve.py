@@ -28,9 +28,9 @@ def get_weights():
     g.remote_config_path = None
     if g.modelWeightsOptions == "pretrained":
         model_data = os.environ["modal.state.models"]
-        sly.logger.debug(f"model_data: {model_data}")
-        model_data = [x["Model"] for x in model_data]
-        sly.logger.debug(f"model_data: {model_data}")
+        for i in model_data:
+            sly.logger.debug(f"model_data: {i}")
+
         raise IOError
         g.local_config_path = model_data["config"]
         g.remote_weights_path = model_data["weightsPath"]
