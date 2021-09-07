@@ -96,6 +96,7 @@ def inference_model(model, local_pointcloud_path, thresh=0.3):
     Returns:
         result Pointcloud.annotation object`.
     """
+    model.cfg.data.test.box_type_3d = 'LiDAR'
     result, data = inference_detector(model, local_pointcloud_path)
     pred_bboxes, pred_scores, labels = decode_prediction(result, g.gt_index_to_labels, thresh)
     annotation = Annotation.create_annotation(pred_bboxes, labels, g.meta)
