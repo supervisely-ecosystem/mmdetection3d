@@ -122,7 +122,12 @@ def inference_pointcloud_ids(api: sly.Api, task_id, context, state, app_logger):
     app_logger.debug("Input data", extra={"state": state})
     results = []
     for pointcloud_id in state["pointcloud_ids"]:
-        result = _inference(api, pointcloud_id, state.get("threshold"))
+        try:
+            result = _inference(api, pointcloud_id, state.get("threshold"))
+        except Exception as e:
+            sly.logger.exception(e)
+
+        sly.logger.info(f"Predict {pointcloud_id}")
         results.append(result.to_json())
 
     request_id = context["request_id"]
