@@ -18,7 +18,7 @@ train_pipeline = [
     dict(type='Collect3D', keys=['points', 'gt_bboxes_3d', 'gt_labels_3d'])
 ]
 test_pipeline = [
-    dict(type='LoadPointsFromFile', coord_type='LIDAR', load_dim=4, use_dim=4),
+    dict(type='LoadPointsFromSlyFile', coord_type='LIDAR', load_dim=4, use_dim=4),
 ]
 
 data = dict(
