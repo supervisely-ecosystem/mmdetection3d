@@ -123,9 +123,50 @@ class SuperviselyDataset(Custom3DDataset):
             return None
         self.pre_pipeline(input_dict)
         example = self.pipeline(input_dict)
-        #if self.filter_empty_gt and \
-        #        (example is None or
-        #         ~(example['gt_labels_3d'] != -1).any()):
-        #    return None
-        print(example)
+        if self.filter_empty_gt and example is None:
+           return None
         return example
+
+
+    def evaluate(self,
+                 results,
+                 metric=None,
+                 iou_thr=(0.25, 0.5),
+                 logger=None,
+                 show=False,
+                 out_dir=None,
+                 pipeline=None):
+        """Evaluate.
+
+        Evaluation in indoor protocol.
+
+        Args:
+            results (list[dict]): List of results.
+            metric (str | list[str]): Metrics to be evaluated.
+            iou_thr (list[float]): AP IoU thresholds.
+            show (bool): Whether to visualize.
+                Default: False.
+            out_dir (str): Path to save the visualization results.
+                Default: None.
+            pipeline (list[dict], optional): raw data loading for showing.
+                Default: None.
+
+        Returns:
+            dict: Evaluation results.
+        """
+        from mmdet3d.core.evaluation import indoor_eval
+        assert isinstance(
+            results, list), f'Expect results to be list, got {type(results)}.'
+        assert len(results) > 0, 'Expect length of results > 0.'
+        assert len(results) == len(self.data_infos)
+        assert isinstance(
+            results[0], dict
+        ), f'Expect elements in results to be dict, got {type(results[0])}.'
+
+        ret_dict = {"OK":1}
+        # gt_annos = [self.get_ann_info(x)['ann_info'] for x in range(len(self.data_infos))]
+        # label2cat = dict(enumerate(self.CLASSES))
+
+
+
+        return ret_dict
