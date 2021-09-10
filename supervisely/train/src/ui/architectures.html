@@ -1,0 +1,84 @@
+<sly-card title="Model settings"
+          subtitle="Choose model architecture and how weights should be initialized"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed6"
+          :disabled="{disabled: state.disabled6, message: 'Finish previous steps before choose NN architecture'}"
+          ref="step6"
+>
+<sly-field title="Architectures" description="Сhoose one of several architectures ">
+     <table class="beautiful-table">
+                <thead>
+                <tr>
+                    <th v-for="row in data.modelColumns">
+                        <div v-html="row['title']"></div>
+                        <div style="color: #7f858e; font-weight: normal; font-size: 12px;">
+                            {{row["subtitle"]}}
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="model in data.models">
+                    <td v-for="column in data.modelColumns">
+                        <div v-if="column.title === 'Model'">
+                            <el-radio class="radio" v-model="state.selectedModel" :label="model[column.key]" :disabled="data.done6">
+                                {{model[column.key]}}
+                            </el-radio>
+                        </div>
+                        <div v-else>
+                            {{model[column.key]}}
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+</sly-field>
+<sly-field title="Weights initialization" description="Choose weights initialization type. Pretrained checkpoints provided by authors of MMDetection3D">
+        <el-radio-group v-model="state.weightsInitialization" :disabled="data.done6">
+            <el-radio-button label="Pretrained">Pretrained</el-radio-button>
+            <el-radio-button label="custom">Download checkpoint</el-radio-button>
+            <el-radio-button label="random">Random initialization</el-radio-button>
+        </el-radio-group>
+</sly-field>
+ <sly-field title="Path to weights dir"
+            description="Copy path from Team Files. Expected filename like: ckpt-YY.data-00000-0000Z. The ckpt-YY.index file will be loaded automatically. ."
+            v-if="state.weightsInitialization == 'custom'">
+        <el-input v-model="state.weightsPath"
+                  :disabled="data.done6"
+                  placeholder="Path to model weights in Team Files">
+        </el-input>
+ </sly-field>
+
+
+    <el-button type="primary" class="regular mt10"
+               @click="command('download_weights')"
+               :loading="!!data.progress6"
+               v-if="!data.done6 && state.weightsInitialization != 'random'">
+        Download weights
+    </el-button>
+
+    <el-button type="primary" class="regular mt10"
+           @click="command('random_weights')"
+           v-if="!data.done6 && state.weightsInitialization == 'random'">
+
+        Accept weights
+    </el-button>
+
+    <div v-if="data.progress6" class="mt10">
+        <div style="color: #20a0ff">{{data.progress6}}: {{data.progressCurrent6}} / {{data.progressTotal6}}</div>
+        <el-progress :percentage="data.progressPercent6"></el-progress>
+    </div>
+    <div v-if="data.done6 && state.weightsInitialization != 'random'">
+        <i class="zmdi zmdi-check-circle mr5 mt10" style="color: #13ce66"></i>
+        <span style="color: #5a6772;">Model init weights has been successfully downloaded</span>
+    </div>
+        <div v-if="data.done6 && state.weightsInitialization == 'random'">
+        <i class="zmdi zmdi-alert-circle-o mr5 mt10" style="color: orange"></i>
+        <span style="color: #5a6772;">Random weights chosen. Model will be learning from scratch</span>
+    </div>
+    <el-button type="warning" class="regular mt10" :plain="true"
+               @click="state.restartFrom = 6;"
+               v-if="data.done6 && !state.started">
+        <i class="zmdi zmdi-rotate-left mr5"></i> Select another model
+    </el-button>
+</sly-card>

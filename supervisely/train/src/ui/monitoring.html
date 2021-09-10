@@ -1,0 +1,183 @@
+<sly-card title="Training progress"
+          subtitle="Task progress, detailed logs, metrics charts, and other visualizations"
+          ref="step9"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed9"
+          :disabled="{disabled: state.disabled9, message: 'Finish previous steps before run training'}">
+    <el-button v-if="!state.done9"
+               type="primary" class="regular"
+               @click="state.started = true; command('train')"
+               :loading="state.started === true"
+    >
+        <i class="zmdi zmdi-play mr5"></i> Train
+    </el-button>
+    <div v-if="data.outputUrl">
+        <sly-field title="Training artifacts"
+                   description="Training artifacts has been uploaded to Team Files">
+            <a slot="title" target="_blank" :href="`${data.outputUrl}`">{{data.outputName}}</a>
+            <sly-icon slot="icon" :options="{ color: '#33c94c', bgColor: '#d9f7e4', rounded: false }">
+                <i class="zmdi zmdi-folder"></i>
+            </sly-icon>
+        </sly-field>
+        <div>
+            <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
+            <span style="color: #5a6772;">Training has been successfully finished</span>
+        </div>
+    </div>
+
+    <div v-if="data.progressUploadDir && !data.outputUrl" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressUploadDir}}: {{data.progressCurrentUploadDir}} / {{data.progressTotalUploadDir}}
+        </div>
+        <el-progress :percentage="data.progressPercentUploadDir"></el-progress>
+    </div>
+    <div v-if="data.progressEpoch" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressEpoch}}: {{data.progressCurrentEpoch}} / {{data.progressTotalEpoch}}
+        </div>
+        <el-progress :percentage="data.progressPercentEpoch"></el-progress>
+    </div>
+    <div v-if="data.progressIter" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressIter}}: {{data.progressCurrentIter}} / {{data.progressTotalIter}}
+        </div>
+        <el-progress :percentage="data.progressPercentIter"></el-progress>
+    </div>
+
+    <div class="mt15" v-if="state.started === true || state.done9">
+        <hr class="mt10 mb10" style="border: 0; border-top: 1px solid rgba(0,0,0,.12);"/>
+        <sly-field title="Smoothing" description="Change the smoothing of line charts">
+            <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
+                <i class="zmdi zmdi-trending-up"></i>
+            </sly-icon>
+<!--            data.chartLR.options.smoothingWeight = val;-->
+            <el-slider
+                    :value="state.smoothing"
+                    :min="0" :max="0.95" :step="0.05" show-input
+                    style="width: 450px;"
+                    @input="(val)=>{
+                                state.smoothing = val;
+                                data.chartTrainLossBbox.options.smoothingWeight = val;
+                                data.chartTrainLossCls.options.smoothingWeight = val;
+                                data.chartTrainLossDir.options.smoothingWeight = val;
+                                data.chartTrainLossSum.options.smoothingWeight = val;
+                                data.chartValLossBbox.options.smoothingWeight = val;
+                                data.chartValLossCls.options.smoothingWeight = val;
+                                data.chartValLossDir.options.smoothingWeight = val;
+                                data.chartValLossSum.options.smoothingWeight = val;
+                            }"
+            >
+            </el-slider>
+        </sly-field>
+
+        <sly-field title="Training charts" description="Real-time training progress monitor">
+            <div class="fflex">
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartTrainLossBbox.options"
+                        :content="data.chartTrainLossBbox.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartTrainLossCls.options"
+                        :content="data.chartTrainLossCls.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartTrainLossDir.options"
+                        :content="data.chartTrainLossDir.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartTrainLossSum.options"
+                        :content="data.chartTrainLossSum.series">
+                </sly-line-chart>
+            </div>
+            <div class="fflex">
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartValLossBbox.options"
+                        :content="data.chartValLossBbox.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartValLossCls.options"
+                        :content="data.chartValLossCls.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartValLossDir.options"
+                        :content="data.chartValLossDir.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 25%;"
+                        :options.sync="data.chartValLossSum.options"
+                        :content="data.chartValLossSum.series">
+                </sly-line-chart>
+            </div>
+               </sly-field>
+
+
+        <hr class="mt10 mb10" style="border: 0; border-top: 1px solid rgba(0,0,0,.12);"/>
+        <sly-field title="Accuracy" description="Change the epoch number to see the corresponding validation accuracy"
+                   v-if="data.progressCurrentEpoch > 0">
+            <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
+                <i class="zmdi zmdi-trending-up"></i>
+            </sly-icon>
+            <el-slider
+                    :value="state.curEpochAcc"
+                    :min="0" :max="data.progressCurrentEpoch" :step="1" show-input
+                    style="width: 450px;"
+                    @input="(val)=>{
+                                state.curEpochAcc = val;
+                            }"
+            >
+            </el-slider>
+
+            <div class="fflex">
+                <table class="beautiful-table al mt10">
+                    <caption>mAP BEV</caption>
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Acc: D0</th>
+                            <th>Acc: D1</th>
+                            <th>Acc: D2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in data.accBevTable[state.curEpochAcc]">
+                            <td>{{item.class}}</td>
+                            <td>{{item.difc_0}}</td>
+                            <td>{{item.difc_1}}</td>
+                            <td>{{item.difc_2}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="beautiful-table al mt10" style="margin-left: 30px">
+                    <caption>mAP 3D</caption>
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Acc: D0</th>
+                            <th>Acc: D1</th>
+                            <th>Acc: D2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in data.acc3DTable[state.curEpochAcc]">
+                            <td>{{item.class}}</td>
+                            <td>{{item.difc_0}}</td>
+                            <td>{{item.difc_1}}</td>
+                            <td>{{item.difc_2}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </sly-field>
+
+
+    </div>
+
+</sly-card>

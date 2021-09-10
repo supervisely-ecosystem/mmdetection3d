@@ -1,0 +1,73 @@
+<sly-card title="Training classes \ figures"
+          subtitle="Training supports only Figures of type Cuboid3D"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed3"
+          :disabled="{disabled: state.disabled3, message: 'First split the data in step 2'}"
+          ref="step3"
+>
+
+        <sly-field title="Select classes" description="Here you can change class balance"
+                   v-if="state.classBalance">
+            <table class="beautiful-table al" style="min-width: 100%">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Class</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr v-for="item in state.classBalance">
+                    <td style="width:5%">
+                        <el-switch v-model="item.enabled"
+                                   @change="command('switchChanged')"
+                                    :disabled="data.done3">
+                        </el-switch >
+                    </td>
+                    <td style="width:10%">{{item.class_name}}</td>
+                    <td style="width:10%">{{item.count}}</td>
+                    <td>
+                        <el-progress class="class_count"  :text-inside="true" :stroke-width="22" :percentage="item.percentage">
+                        </el-progress>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </sly-field>
+
+
+    <div class="mt10">
+        <el-button type="primary" class="regular mr10"
+                   :loading="state.tagsInProgress"
+                   v-if="!state.classBalance"
+                   @click="command('show_tags')">
+            Show classes
+        </el-button>
+        <div v-if="state.classBalance">
+            <el-button type="primary" class="regular"
+                       @click="command('use_tags')"
+                       :disabled="state.selectedTags.length < 1"
+                       v-if="!data.done3">
+                Use {{state.selectedTags.length}} selected classes
+            </el-button>
+            <div v-if="state.selectedTags.length < 1" class="mt5">
+                <i class="zmdi zmdi-help" style="color: orange"></i> Please select at least one class for training
+            </div>
+            <div v-if="data.done3">
+                <i class="zmdi zmdi-check-circle mr5 mt10" style="color: #13ce66"></i>
+                <span style="color: #5a6772;">Selected {{state.selectedTags.length}} classes</span>
+            </div>
+            <el-button type="warning" class="regular mt10" :plain="true"
+                       @click="state.restartFrom = 3;"
+                       v-if="data.done3 && !state.started">
+                <i class="zmdi zmdi-rotate-left mr5"></i> Select other tags
+            </el-button>
+        </div>
+    </div>
+    <div v-if="data.progress3" class="mt10">
+        <div style="color: #20a0ff">{{data.progress3}}: {{data.progressCurrent3}} / {{data.progressTotal3}}</div>
+        <el-progress :percentage="data.progressPercent3"></el-progress>
+    </div>
+</sly-card>

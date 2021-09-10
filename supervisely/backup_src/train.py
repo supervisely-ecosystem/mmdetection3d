@@ -223,9 +223,9 @@ def train(config_path):
 if __name__ == "__main__":
     import supervisely_lib as sly
     import shutil
-    api = sly.Api.from_env()
-    project_id = 6629
-    project_dir = "/data/slyproject"
+    #api = sly.Api.from_env()
+    #project_id = 6629
+    #project_dir = "/data/slyproject"
 
     ##############
     #shutil.rmtree(project_dir, ignore_errors=True)
@@ -238,26 +238,13 @@ if __name__ == "__main__":
 
     from mmdet.datasets import build_dataloader
 
-    # data_loader = build_dataloader(
-    #     x,
-    #     1,
-    #     1,
-    #     # cfg.gpus will be ignored if distributed
-    #     1,
-    #     dist=False,
-    #     seed=1234556)
+
     #
-    # train_pipeline = [
-    #     dict(type='LoadPointsFromSlyFile'),
-    #     dict(type='LoadAnnotations3D', with_bbox_3d=True, with_label_3d=True),
-    #     dict(type='RandomFlip3D', flip_ratio_bev_horizontal=0.5),
-    #     dict(type='Collect3D', keys=['points', 'gt_bboxes_3d', 'gt_labels_3d'])
-    # ]
     #
     #
     # for i, data_batch in enumerate(data_loader):
     #     print(i, data_batch)
 
-
-    train("/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_sly-3d-3class.py")
+    train("../train/configs/hv_ssn_secfpn_sbn-all_2x16_2x_sly.py")
+    #train("/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_sly-3d-3class.py")
 

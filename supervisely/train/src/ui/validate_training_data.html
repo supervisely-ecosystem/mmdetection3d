@@ -1,0 +1,59 @@
+<sly-card title="Data validation"
+          subtitle="Report show data overview and automatically highlights possible issues in training data"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed4"
+          :disabled="{disabled: state.disabled4, message: 'Select training tags at step2 before validate final training data'}"
+          ref="step4"
+>
+    <table class="beautiful-table al mt10" v-if="data.report">
+        <thead>
+        <tr>
+            <th style="min-width: 75px;">Type</th>
+            <th style="min-width: 180px;">Name</th>
+            <th>Count</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in data.report">
+            <td>
+                <div v-if="item.type === 'error'" style="color: red">
+                    <i class="zmdi zmdi-close-circle"></i> <span class="ml5">{{item.type}}</span>
+                </div>
+                <div v-if="item.type === 'pass'" style="color: #13ce66">
+                    <i class="zmdi zmdi-check-circle"></i> <span class="ml5">{{item.type}}</span>
+                </div>
+                <div v-if="item.type === 'warning'" style="color: orange">
+                    <i class="zmdi zmdi-alert-triangle"></i> <span class="ml5">{{item.type}}</span>
+                </div>
+                <div v-if="item.type === 'info'">
+                    <i class="zmdi zmdi-info-outline"></i> <span class="ml5">{{item.type}}</span>
+                </div>
+            </td>
+            <td>{{item.title}}</td>
+            <td>{{item.count}}</td>
+            <td>{{item.description}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <el-button type="primary" class="regular mt10"
+               v-if="!data.done4"
+               @click="command('validate_data')">
+        Validate
+    </el-button>
+    <div v-if="data.done4" class="mt10">
+        <div v-if="data.cntErrors > 0" style="color: red">
+            <i class="zmdi zmdi-close-circle mr5"></i>
+            <span>Validation failed, errors can not be automatically resolved</span>
+        </div>
+        <div v-if="data.cntErrors === 0 && data.cntWarnings > 0" style="color: orange">
+            <i class="zmdi zmdi-alert-triangle mr5"></i>
+            <span>Validation completed, all warnings will be resolved automatically</span>
+        </div>
+        <div v-if="data.cntErrors === 0 && data.cntWarnings === 0" style="color: #13ce66">
+            <i class="zmdi zmdi-check-circle mr5"></i>
+            <span>Validation successfully completed</span>
+        </div>
+    </div>
+
+</sly-card>
