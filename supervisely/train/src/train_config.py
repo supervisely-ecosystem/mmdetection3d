@@ -44,12 +44,11 @@ def get_cfg_str(path_to_config):
     return model_config
 
 
-def generate_model_config(state):
+def generate_config(state):
     model_name = state["selectedModel"]
     model_info = architectures.get_model_info_by_name(model_name)
 
-
-    lib_model_config_path = os.path.join(g.root_source_dir, model_info["modelConfig"])
+    lib_model_config_path = os.path.join(g.root_source_dir, model_info["config"])
     with open(lib_model_config_path) as f:
         py_config = f.read()
 
@@ -62,7 +61,7 @@ def generate_model_config(state):
 
     with open(model_config_path, 'w') as f:
         f.write(py_config)
-    return model_config_path, py_config
+    return model_config_path
 
 
 def generate_dataset_config(state):
@@ -192,20 +191,11 @@ def generate_runtime_config(state):
     return runtime_config_path, py_config
 
 
-def generate_main_config(state):
-    with open(main_config_path, 'w') as f:
-        f.write(main_config_template)
-    return main_config_path, str(main_config_template)
-
 
 def save_from_state(state):
-    with open(model_config_path, 'w') as f:
-        f.write(state["modelPyConfig"])
-    with open(dataset_config_path, 'w') as f:
-        f.write(state["datasetPyConfig"])
-    with open(schedule_config_path, 'w') as f:
-        f.write(state["schedulePyConfig"])
-    with open(runtime_config_path, 'w') as f:
-        f.write(state["runtimePyConfig"])
-    with open(main_config_path, 'w') as f:
-        f.write(state["mainPyConfig"])
+    with open(state["trainConfigPath"], 'w') as f:
+        f.write(state["trainConfigLines"])
+
+def save_config(cfg, train_config_path):
+    with open(train_config_path, 'w') as f:
+        f.write(cfg)

@@ -2,7 +2,7 @@ import os
 import supervisely_lib as sly
 from sly_train_progress import init_progress
 import sly_globals as g
-#from scripts import run_pipeline
+from tools.train import main
 
 
 _open_lnk_name = "open_app.lnk"
@@ -113,16 +113,9 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         sly.json.dump_json_file(state, os.path.join(g.info_dir, "ui_state.json"))
 
-
-        exclude_items = g.api.app.get_field(g.task_id, "data.pointcloudsWithoutFigures")
-        #convert(g.project_dir, exclude_items=exclude_items)
-
-
-        #init_script_arguments(state)
-
-        #run_pipeline.main()
         sly.logger.info("starting training...")
-        raise NotImplementedError
+        init_script_arguments(state)
+        main()
 
         # hide progress bars and eta
         fields = [
