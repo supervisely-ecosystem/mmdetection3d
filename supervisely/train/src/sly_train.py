@@ -1,5 +1,6 @@
 import supervisely_lib as sly
 import sly_globals as g
+import sly_logger_hook  # to register hook
 import ui
 
 
