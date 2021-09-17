@@ -2,7 +2,7 @@ import os
 import supervisely_lib as sly
 from sly_train_progress import init_progress
 import sly_globals as g
-from tools.train import main
+from tools.train import main as mmtrain
 
 
 _open_lnk_name = "open_app.lnk"
@@ -115,7 +115,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
 
         sly.logger.info("starting training...")
         init_script_arguments(state)
-        main()
+        mmtrain()
 
         # hide progress bars and eta
         fields = [

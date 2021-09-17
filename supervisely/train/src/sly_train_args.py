@@ -4,7 +4,7 @@ import train_config
 
 
 def init_script_arguments(state):
-    sys.argv.extend(["--config", state['trainConfigPath']])
+    sys.argv.append(state['trainConfigPath'])
     sys.argv.extend(["--work-dir", g.checkpoints_dir])
 
 

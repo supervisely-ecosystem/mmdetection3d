@@ -52,7 +52,7 @@ def generate_config(state):
     with open(lib_model_config_path) as f:
         py_config = f.read()
 
-    py_config = py_config.replace('SyncBN', 'BN')
+    py_config = py_config.replace('naiveSyncBN', 'BN')
     num_classes = g.project_meta.obj_classes.__len__()
 
     py_config = re.sub(r"num_classes*=(\d+),",

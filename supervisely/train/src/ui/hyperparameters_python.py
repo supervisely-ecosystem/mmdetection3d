@@ -42,8 +42,6 @@ def restart(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def preview_configs(api: sly.Api, task_id, context, state, app_logger):
     train_config_path = train_config.generate_config(state)
-    #
-    # train_config_path = os.path.join(g.info_dir, "train_" + sly.fs.get_file_name_with_ext(state["modelConfigExample"]))
 
     with open(train_config_path) as f:
         config_str = f.read()
