@@ -1,6 +1,6 @@
 # optimizer
 # This schedule is mainly used by models on nuScenes dataset
-optimizer = dict(type='AdamW', lr=0.001, weight_decay=0.01)
+optimizer = dict(type='AdamW', lr=0.002, weight_decay=0.01)
 # max_norm=10 is better for SECOND
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 lr_config = dict(
@@ -11,4 +11,4 @@ lr_config = dict(
     step=[20, 23])
 momentum_config = None
 # runtime settings
-runner = dict(type='EpochBasedRunner', max_epochs=24)
+runner = dict(type='EpochBasedRunner', max_epochs=400)

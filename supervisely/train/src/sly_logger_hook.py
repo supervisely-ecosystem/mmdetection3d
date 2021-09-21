@@ -48,12 +48,27 @@ class SuperviselyLoggerHook(TextLoggerHook):
 
         epoch_float = \
             float(self.progress_epoch.current) + float(self.progress_iter.current) / float(self.progress_iter.total)
-        if log_dict['mode'] == 'train':
-            fields.extend([
-                {"field": "data.chartLR.series[0].data", "payload": [[epoch_float, round(log_dict["lr"], 6)]], "append": True},
-                {"field": "data.chartTrainLoss.series[0].data", "payload": [[epoch_float, log_dict["loss"]]],
-                 "append": True},
-            ])
+
+        mode = log_dict['mode']
+        mode = mode.capitalize()
+        assert mode in ["Train", "Val"]
+
+        loss_field_map = {
+            "loss_cls": f"chart{mode}LossCls",
+            "loss_bbox": f"chart{mode}LossBbox",
+            "loss_dir": f"chart{mode}LossDir",
+            "loss": f"chart{mode}LossSum"
+        }
+        if mode == 'Train':
+            for k in loss_field_map.keys():
+                loss_value = round(float(log_dict[k]), 6)
+                fields.append({"field":  f"data.{loss_field_map[k]}.series[0].data",
+                               "payload": [[epoch_float, loss_value]],
+                               "append": True})
+            fields.append({"field": "data.chartLR.series[0].data",
+                 "payload": [[epoch_float, round(log_dict["lr"], 6)]],
+                 "append": True})
+
             self._lrs.append(log_dict["lr"])
             fields.append({
                 "field": "data.chartLR.options.yaxisInterval",
@@ -77,5 +92,5 @@ class SuperviselyLoggerHook(TextLoggerHook):
         #         {"field": "data.chartValAccuracy.series[0].data",
         #          "payload": [[log_dict["epoch"], log_dict["bbox_mAP"]]], "append": True},
         #     ])
-
+        print(fields)
         g.api.app.set_fields(g.task_id, fields)

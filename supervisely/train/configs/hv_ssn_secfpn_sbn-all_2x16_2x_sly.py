@@ -1,11 +1,25 @@
 _base_ = [
     '/mmdetection3d/configs/_base_/models/hv_pointpillars_fpn_lyft.py',
-    '/mmdetection3d/configs/_base_/schedules/schedule_2x.py',
     '/mmdetection3d/configs/_base_/default_runtime.py',
 ]
 
 dataset_type = "SuperviselyDataset"
 data_root = '/data/slyproject'
+
+# This schedule is mainly used by models on nuScenes dataset
+optimizer = dict(type='AdamW', lr=0.002, weight_decay=0.01)
+# max_norm=10 is better for SECOND
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=1000,
+    warmup_ratio=1.0 / 1000,
+    step=[20, 23])
+momentum_config = None
+# runtime settings
+runner = dict(type='EpochBasedRunner', max_epochs=400)
+checkpoint_config = dict(interval=20)
 
 input_modality = dict(
     use_lidar=True,
@@ -17,10 +31,7 @@ input_modality = dict(
 point_cloud_range = [-100, -100, -5, 100, 100, 3]
 # Note that the order of class names should be consistent with
 # the following anchors' order
-class_names = [
-    'bicycle', 'motorcycle', 'pedestrian', 'animal', 'car',
-    'emergency_vehicle', 'bus', 'other_vehicle', 'truck'
-]
+class_names = ['car', 'truck']
 
 train_pipeline = [
     dict(type='LoadPointsFromFile', coord_type='LIDAR', load_dim=4, use_dim=4),
@@ -106,24 +117,11 @@ model = dict(
         use_direction_classifier=True,
         anchor_generator=dict(
             type='AlignedAnchor3DRangeGeneratorPerCls',
-            ranges=[[-100, -100, -1.0709302, 100, 100, -1.0709302],
-                    [-100, -100, -1.3220503, 100, 100, -1.3220503],
-                    [-100, -100, -0.9122268, 100, 100, -0.9122268],
-                    [-100, -100, -1.8012227, 100, 100, -1.8012227],
+            ranges=[
                     [-100, -100, -1.0715024, 100, 100, -1.0715024],
-                    [-100, -100, -0.8871424, 100, 100, -0.8871424],
-                    [-100, -100, -0.3519405, 100, 100, -0.3519405],
-                    [-100, -100, -0.6276341, 100, 100, -0.6276341],
                     [-100, -100, -0.3033737, 100, 100, -0.3033737]],
             sizes=[
-                [0.63, 1.76, 1.44],  # bicycle
-                [0.96, 2.35, 1.59],  # motorcycle
-                [0.76, 0.80, 1.76],  # pedestrian
-                [0.35, 0.73, 0.50],  # animal
                 [1.92, 4.75, 1.71],  # car
-                [2.42, 6.52, 2.34],  # emergency vehicle
-                [2.92, 12.70, 3.42],  # bus
-                [2.75, 8.17, 3.20],  # other vehicle
                 [2.84, 10.24, 3.44]  # truck
             ],
             custom_values=[],
@@ -132,27 +130,9 @@ model = dict(
         tasks=[
             dict(
                 num_class=2,
-                class_names=['bicycle', 'motorcycle'],
+                class_names=['car', 'truck'],
                 shared_conv_channels=(64, 64),
                 shared_conv_strides=(1, 1),
-                norm_cfg=dict(type='BN2d', eps=1e-3, momentum=0.01)),
-            dict(
-                num_class=2,
-                class_names=['pedestrian', 'animal'],
-                shared_conv_channels=(64, 64),
-                shared_conv_strides=(1, 1),
-                norm_cfg=dict(type='BN2d', eps=1e-3, momentum=0.01)),
-            dict(
-                num_class=2,
-                class_names=['car', 'emergency_vehicle'],
-                shared_conv_channels=(64, 64, 64),
-                shared_conv_strides=(2, 1, 1),
-                norm_cfg=dict(type='BN2d', eps=1e-3, momentum=0.01)),
-            dict(
-                num_class=3,
-                class_names=['bus', 'other_vehicle', 'truck'],
-                shared_conv_channels=(64, 64, 64),
-                shared_conv_strides=(2, 1, 1),
                 norm_cfg=dict(type='BN2d', eps=1e-3, momentum=0.01))
         ],
         assign_per_class=True,
@@ -174,61 +154,12 @@ model = dict(
         _delete_=True,
         pts=dict(
             assigner=[
-                dict(  # bicycle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # motorcycle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # pedestrian
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # animal
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
                 dict(  # car
                     type='MaxIoUAssigner',
                     iou_calculator=dict(type='BboxOverlapsNearest3D'),
                     pos_iou_thr=0.6,
                     neg_iou_thr=0.45,
                     min_pos_iou=0.45,
-                    ignore_iof_thr=-1),
-                dict(  # emergency vehicle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # bus
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.6,
-                    neg_iou_thr=0.45,
-                    min_pos_iou=0.45,
-                    ignore_iof_thr=-1),
-                dict(  # other vehicle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
                     ignore_iof_thr=-1),
                 dict(  # truck
                     type='MaxIoUAssigner',
@@ -241,77 +172,6 @@ model = dict(
             allowed_border=0,
             code_weight=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
             pos_weight=-1,
-            debug=False),
-    train_cfg=dict(
-        _delete_=True,
-        pts=dict(
-            assigner=[
-                dict(  # bicycle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # motorcycle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # pedestrian
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # animal
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # car
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.6,
-                    neg_iou_thr=0.45,
-                    min_pos_iou=0.45,
-                    ignore_iof_thr=-1),
-                dict(  # emergency vehicle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # bus
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.6,
-                    neg_iou_thr=0.45,
-                    min_pos_iou=0.45,
-                    ignore_iof_thr=-1),
-                dict(  # other vehicle
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.55,
-                    neg_iou_thr=0.4,
-                    min_pos_iou=0.4,
-                    ignore_iof_thr=-1),
-                dict(  # truck
-                    type='MaxIoUAssigner',
-                    iou_calculator=dict(type='BboxOverlapsNearest3D'),
-                    pos_iou_thr=0.6,
-                    neg_iou_thr=0.45,
-                    min_pos_iou=0.45,
-                    ignore_iof_thr=-1)
-            ],
-            allowed_border=0,
-            code_weight=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            pos_weight=-1,
-            debug=False))))
+            debug=False)))
+
 
