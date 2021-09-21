@@ -25,7 +25,6 @@ def send_error_data(func):
 
 @sly.timeit
 def get_weights():
-    g.remote_config_path = None
     if g.modelWeightsOptions == "pretrained":
         sly.logger.debug(f'{g.pretrained_models_cfg}')
         model_data = [x for x in g.pretrained_models_cfg if x["Model"] == g.pretrained_weights][0]
@@ -33,7 +32,20 @@ def get_weights():
         g.remote_weights_path = model_data["weightsPath"]
 
     elif g.modelWeightsOptions == "custom":
-        raise NotImplementedError
+        g.remote_weights_path = g.custom_weights
+        g.remote_config_path = os.path.join(os.path.dirname(os.path.dirname(g.custom_weights)),
+                                            "configs/model_config.py")
+        g.local_config_path = os.path.join(g.my_app.data_dir, "model_config.py")
+
+        progress = sly.Progress("Downloading config", 1, is_size=True, need_info_log=True)
+        g.local_weights_path = os.path.join(g.my_app.data_dir, "weights.pt")
+
+        file_info = g.my_app.public_api.file.get_info_by_path(g.team_id, g.remote_config_path)
+        progress.set(current=0, total=file_info.sizeb)
+        g.my_app.public_api.file.download(g.team_id, g.remote_config_path,
+                                          g.local_config_path, g.my_app.cache,
+                                          progress.iters_done_report)
+
     else:
         raise ValueError("Unknown weights option {!r}".format(g.modelWeightsOptions))
 
