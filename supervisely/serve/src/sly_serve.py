@@ -30,6 +30,7 @@ def get_weights():
         model_data = [x for x in g.pretrained_models_cfg if x["Model"] == g.pretrained_weights][0]
         g.local_config_path = model_data["config"]
         g.remote_weights_path = model_data["weightsPath"]
+        g.remote_config_path = g.local_config_path
 
     elif g.modelWeightsOptions == "custom":
         g.remote_weights_path = g.custom_weights
