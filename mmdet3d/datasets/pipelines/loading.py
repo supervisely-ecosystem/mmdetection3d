@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import mmcv
 import numpy as np
-
+import open3d as o3d
 from mmdet3d.core.points import BasePoints, get_points_type
 from mmdet.datasets.builder import PIPELINES
 from mmdet.datasets.pipelines import LoadAnnotations, LoadImageFromFile
@@ -384,11 +384,22 @@ class LoadPointsFromFile(object):
         Returns:
             np.ndarray: An array containing point clouds data.
         """
+        if pts_filename.endswith('.pcd'):
+            points = o3d.io.read_point_cloud(pts_filename)
+            points = np.asarray(points.points)
+            if self.load_dim > 3:
+                points = np.hstack((points, np.zeros([points.shape[0], 1])))
+            if self.load_dim > 4:
+                points = np.hstack((points, np.zeros([points.shape[0], 1])))
+            assert points.shape[1] == self.load_dim
+            return points.flatten()
+
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
         try:
             pts_bytes = self.file_client.get(pts_filename)
             points = np.frombuffer(pts_bytes, dtype=np.float32)
+
         except ConnectionError:
             mmcv.check_file_exist(pts_filename)
             if pts_filename.endswith('.npy'):
@@ -450,6 +461,41 @@ class LoadPointsFromFile(object):
         repr_str += f'file_client_args={self.file_client_args}, '
         repr_str += f'load_dim={self.load_dim}, '
         repr_str += f'use_dim={self.use_dim})'
+        return repr_str
+
+@PIPELINES.register_module()
+class LoadPointsFromSlyFile(object):
+    """Load Points From File.
+    Load supervisely points from pcd file.
+    3d + 1 intensity channel in 1st color channel coded
+    """
+
+    def _load_points(self, pts_filename):
+        assert pts_filename.endswith('.pcd')
+        mmcv.check_file_exist(pts_filename)
+        pcloud = o3d.io.read_point_cloud(pts_filename)
+        points = np.asarray(pcloud.points, dtype=np.float32)
+        intensity = np.asarray(pcloud.colors, dtype=np.float32)[:, 0:1]
+        points = np.hstack((points, intensity)).astype("float32")
+        return points
+
+    def __call__(self, results):
+        """Call function to load points data from file.
+        Args:
+            results (dict): Result dict (from dataset loader, containing point cloud pts_filename.
+        Returns:
+            dict: The result dict containing the point clouds data.
+        """
+        pts_filename = results['pts_filename']
+        points = self._load_points(pts_filename)
+        points_class = get_points_type("LIDAR")
+        points = points_class(points, points_dim=points.shape[-1])
+        results['points'] = points
+        return results
+
+    def __repr__(self):
+        """str: Return a string that describes the module."""
+        repr_str = self.__class__.__name__
         return repr_str
 
 

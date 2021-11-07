@@ -1,0 +1,14 @@
+version: "2.3"
+services:
+  mmdetection3d:
+    shm_size: '20gb'
+    runtime: 'nvidia'
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+      args:
+        IMAGE: docker.deepsystems.io/mmdetection3d:1.0.0
+    ports:
+      - "5554:22"
+    volumes:
+      - "./data:/data"

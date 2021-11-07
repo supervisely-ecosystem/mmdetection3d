@@ -129,6 +129,8 @@ data/scannet/scans/
 data/sunrgbd/OFFICIAL_SUNRGBD/
 *.obj
 *.ply
-
+.env
+.env.secret
 # Waymo evaluation
 mmdet3d/core/evaluation/waymo_utils/compute_detection_metrics_main
+secret_debug.env

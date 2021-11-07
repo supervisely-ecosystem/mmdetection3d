@@ -1,0 +1,108 @@
+{
+  "name": "Serve MMDet3D",
+  "type": "app",
+  "categories": [
+    "neural network",
+    "pointcloud"
+  ],
+  "description": "Deploy model as REST API service",
+  "docker_image": "docker.deepsystems.io/mmdetection3d:1.0.0",
+  "main_script": "supervisely/serve/src/sly_serve.py",
+  "modal_template": "supervisely/serve/src/modal.html",
+  "modal_width": 700,
+  "modal_template_state": {
+    "modelWeightsOptions": "pretrained",
+    "selectedModel": "SSN [Lyft - all classes]",
+    "device": "0",
+    "weightsPath": "",
+    "models": [
+        {
+            "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d.py",
+            "weightsPath": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_lyft-3d_20201016_220844-3058d9fc.pth",
+            "Model": "SSN [Lyft - 9classes]",
+            "Mem (GB)": 12.2
+        },        {
+            "config": "/mmdetection3d/configs/ssn/hv_ssn_secfpn_sbn-all_2x16_2x_nus-3d.py",
+            "weightsPath": "/MMDet3D_Models/hv_ssn_secfpn_sbn-all_2x16_2x_nus-3d_20201023_193737-5fda3f00.pth",
+            "Model": "SSN [Nuscenes - 10classes]",
+            "Mem (GB)": 16.4
+        },        {
+            "config": "/mmdetection3d/configs/3dssd/3dssd_4x4_kitti-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/3dssd_kitti-3d-car_20210602_124438-b4276f56.pth",
+            "Model": "3DSSD [KITTI - Car]",
+            "Mem (GB)": 4.7
+        },        {
+            "config": "/mmdetection3d/configs/second/hv_second_secfpn_6x8_80e_kitti-3d-3class.py",
+            "weightsPath": "/MMDet3D_Models/hv_second_secfpn_6x8_80e_kitti-3d-3class_20200620_230238-9208083a.pth",
+            "Model": "Second [KITTI - 3class]",
+            "Mem (GB)": 5.4
+        },        {
+            "config": "/mmdetection3d/configs/second/hv_second_secfpn_6x8_80e_kitti-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/hv_second_secfpn_6x8_80e_kitti-3d-car_20200620_230238-393f000c.pth",
+            "Model": "Second [KITTI - Car]",
+            "Mem (GB)": 5.4
+        },        {
+            "config": "/mmdetection3d/configs/parta2/hv_PartA2_secfpn_2x8_cyclic_80e_kitti-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/hv_PartA2_secfpn_2x8_cyclic_80e_kitti-3d-car_20200620_230755-f2a38b9a.pth",
+            "Model": "PartA2 [KITTI - Car]",
+            "Mem (GB)": 4.0
+        },        {
+            "config": "/mmdetection3d/configs/parta2/hv_PartA2_secfpn_2x8_cyclic_80e_kitti-3d-3class.py",
+            "weightsPath": "/MMDet3D_Models/hv_PartA2_secfpn_2x8_cyclic_80e_kitti-3d-3class_20200620_230724-a2672098.pth",
+            "Model": "PartA2 [KITTI - 3class]",
+            "Mem (GB)": 4.1
+        },        {
+            "config": "/mmdetection3d/configs/centerpoint/centerpoint_0075voxel_second_secfpn_dcn_circlenms_4x8_cyclic_20e_nus.py",
+            "weightsPath": "/MMDet3D_Models/centerpoint_0075voxel_second_secfpn_dcn_circlenms_4x8_cyclic_20e_nus_20200930_201619-67c8496f.pth",
+            "Model": "Centerpoint [NuScenes - 10class]",
+            "Mem (GB)": 8.5
+        },         {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-car_20200901_204315-302fc3e7.pth",
+            "Model": "PointPillars [Waymo - Car]",
+            "Mem (GB)": 7.76
+        },        {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-3class.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_secfpn_sbn_2x16_2x_waymoD5-3d-3class_20200831_204144-d1a706b1.pth",
+            "Model": "PointPillars [Waymo - 3class]",
+            "Mem (GB)": 8.12
+        },        {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_kitti-3d-car.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_secfpn_6x8_160e_kitti-3d-car_20200620_230614-77663cd6.pth",
+            "Model": "PointPillars [KITTI - Car]",
+            "Mem (GB)": 5.4
+        },        {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_secfpn_6x8_160e_kitti-3d-3class.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_secfpn_6x8_160e_kitti-3d-3class_20200620_230421-aa0f3adb.pth",
+            "Model": "PointPillars [KITTI - 3class]",
+            "Mem (GB)": 5.5
+        },        {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_fpn_sbn-all_2x8_2x_lyft-3d.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_fpn_sbn-all_2x8_2x_lyft-3d_20210517_202818-fc6904c3.pth",
+            "Model": "PointPillars [Lyft - 9class]",
+            "Mem (GB)": 9.2
+        },        {
+            "config": "/mmdetection3d/configs/pointpillars/hv_pointpillars_fpn_sbn-all_4x8_2x_nus-3d.py",
+            "weightsPath": "/MMDet3D_Models/hv_pointpillars_fpn_sbn-all_4x8_2x_nus-3d_20200620_230405-2fa62f3d.pth",
+            "Model": "PointPillars [NuScenes - 10class]",
+            "Mem (GB)": 16.4
+        }
+
+
+    ],
+    "modelColumns": [
+        {"key": "Model", "title": "Model", "subtitle": null},
+        {"key": "Mem (GB)", "title": "Mem (GB)", "subtitle": null}
+    ]
+  },
+  "task_location": "application_sessions",
+  "icon": "https://img.icons8.com/ios-filled/100/000000/3d-scale.png",
+  "icon_cover": true,
+  "isolate": true,
+  "need_gpu": true,
+  "headless": true,
+  "instance_version": "6.4.15",
+  "session_tags": [
+    "deployed_nn"
+  ]
+}
