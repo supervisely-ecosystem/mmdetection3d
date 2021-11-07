@@ -10,17 +10,17 @@ It serves as a baseline built on top of mmdetection and mmdetection3d for 3D det
 Currently we first support the benchmark on the large-scale nuScenes dataset, which achieved 1st place out of all the vision-only methods in the [nuScenes 3D detecton challenge](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Camera) of NeurIPS 2020.
 
 ```
-@article{wang2021fcos3d,
-  title={{FCOS3D}: Fully Convolutional One-Stage Monocular 3D Object Detection},
-  author={Wang, Tai and Zhu, Xinge and Pang, Jiangmiao and Lin, Dahua},
-  journal={arXiv preprint arXiv:2104.10956},
-  year={2021}
+@inproceedings{wang2021fcos3d,
+	title={{FCOS3D: Fully} Convolutional One-Stage Monocular 3D Object Detection},
+	author={Wang, Tai and Zhu, Xinge and Pang, Jiangmiao and Lin, Dahua},
+	booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) Workshops},
+	year={2021}
 }
 # For the original 2D version
 @inproceedings{tian2019fcos,
-  title     =  {{FCOS}: Fully Convolutional One-Stage Object Detection},
+  title     =  {{FCOS: Fully} Convolutional One-Stage Object Detection},
   author    =  {Tian, Zhi and Shen, Chunhua and Chen, Hao and He, Tong},
-  booktitle =  {Proc. Int. Conf. Computer Vision (ICCV)},
+  booktitle =  {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
   year      =  {2019}
 }
 ```
@@ -58,6 +58,6 @@ We also provide visualization functions to show the monocular 3D detection resul
 
 |  Backbone   | Lr schd | Mem (GB) | Inf time (fps) | mAP | NDS | Download |
 | :---------: | :-----: | :------: | :------------: | :----: |:----: | :------: |
-|[ResNet101 w/ DCN](./fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d.py)|1x|8.69||29.9|37.3|[model](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_20210425_181341-8d5a21fe.pth) &#124; [log](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_20210425_181341.log.json)|
-|[above w/ finetune](./fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune.py)|1x|8.69||32.1|39.3|[model](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune_20210427_091419-35aaaad0.pth) &#124; [log](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune_20210427_091419.log.json)|
-|above w/ tta|1x|8.69||33.1|40.0||
+|[ResNet101 w/ DCN](./fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d.py)|1x|8.69||29.8|37.7|[model](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_20210715_235813-4bed5239.pth) &#124; [log](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_20210715_235813.log.json)|
+|[above w/ finetune](./fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune.py)|1x|8.69||32.1|39.5|[model](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune_20210717_095645-8d806dc2.pth) &#124; [log](https://download.openmmlab.com/mmdetection3d/v0.1.0_models/fcos3d/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune/fcos3d_r101_caffe_fpn_gn-head_dcn_2x8_1x_nus-mono3d_finetune_20210717_095645.log.json)|
+|above w/ tta|1x|8.69||33.1|40.3||

@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 """Script to gather benchmarked models and prepare them for upload.
 
 Usage:
@@ -24,8 +25,10 @@ SCHEDULES_LUT = {
     '_6x_': 73,
     '_50e_': 50,
     '_80e_': 80,
+    '_150e_': 150,
     '_200e_': 200,
-    '_250e_': 250
+    '_250e_': 250,
+    '_400e_': 400
 }
 
 # TODO: add support for lyft dataset
@@ -40,8 +43,8 @@ RESULTS_LUT = {
     'lyft': ['score'],
     'scannet_seg': ['miou'],
     's3dis_seg': ['miou'],
-    'scannet': ['mAR_0.50'],
-    'sunrgbd': ['mAR_0.50']
+    'scannet': ['mAP_0.50'],
+    'sunrgbd': ['mAP_0.50']
 }
 
 

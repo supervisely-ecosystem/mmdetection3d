@@ -8,9 +8,17 @@
 [![license](https://img.shields.io/github/license/open-mmlab/mmdetection3d.svg)](https://github.com/open-mmlab/mmdetection3d/blob/master/LICENSE)
 
 
-**News**: We released the codebase v0.15.0.
+**News**: We released the codebase v0.17.2.
 
-In the recent [nuScenes 3D detection challenge](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) of the 5th AI Driving Olympics in NeurIPS 2020, we obtained the best PKL award and the second runner-up by multi-modality entry, and the best vision-only results.
+In addition, we have preliminarily supported several new models on the [v1.0.0.dev0](https://github.com/open-mmlab/mmdetection3d/tree/v1.0.0.dev0) branch, including [DGCNN](https://github.com/open-mmlab/mmdetection3d/blob/v1.0.0.dev0/configs/dgcnn/README.md), [SMOKE](https://github.com/open-mmlab/mmdetection3d/blob/v1.0.0.dev0/configs/smoke/README.md) and [PGD](https://github.com/open-mmlab/mmdetection3d/blob/v1.0.0.dev0/configs/pgd/README.md).
+
+Note: We are going through large refactoring to provide simpler and more unified usage of many modules. Thus, few features will be added to the master branch in the following months.
+
+The compatibilities of models are broken due to the unification and simplification of coordinate systems. For now, most models are benchmarked with similar performance, though few models are still being benchmarked.
+
+You can start experiments with [v1.0.0.dev0](https://github.com/open-mmlab/mmdetection3d/tree/v1.0.0.dev0) if you are interested. Please note that our new features will only be supported in v1.0.0 branch afterward.
+
+In the [nuScenes 3D detection challenge](https://www.nuscenes.org/object-detection?externalData=all&mapData=all&modalities=Any) of the 5th AI Driving Olympics in NeurIPS 2020, we obtained the best PKL award and the second runner-up by multi-modality entry, and the best vision-only results.
 
 Code and models for the best vision-only method, [FCOS3D](https://arxiv.org/abs/2104.10956), have been released. Please stay tuned for [MoCa](https://arxiv.org/abs/2012.12741).
 
@@ -62,8 +70,10 @@ This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Changelog
 
-v0.15.0 was released in 1/7/2021.
+v0.17.2 was released in 1/11/2021.
 Please refer to [changelog.md](docs/changelog.md) for details and release history.
+
+For branch v1.0.0.dev0, please refer to [changelog_v1.0.md](https://github.com/Tai-Wang/mmdetection3d/blob/v1.0.0.dev0-changelog/docs/changelog_v1.0.md) for our latest features and more details.
 
 ## Benchmark and model zoo
 
@@ -89,8 +99,11 @@ Support methods
 - [x] [CenterPoint (CVPR'2021)](configs/centerpoint/README.md)
 - [x] [SSN (ECCV'2020)](configs/ssn/README.md)
 - [x] [ImVoteNet (CVPR'2020)](configs/imvotenet/README.md)
-- [x] [FCOS3D (Arxiv'2021)](configs/fcos3d/README.md)
+- [x] [FCOS3D (ICCVW'2021)](configs/fcos3d/README.md)
 - [x] [PointNet++ (NeurIPS'2017)](configs/pointnet2/README.md)
+- [x] [Group-Free-3D (ICCV'2021)](configs/groupfree3d/README.md)
+- [x] [ImVoxelNet (Arxiv'2021)](configs/imvoxelnet/README.md)
+- [x] [PAConv (CVPR'2021)](configs/paconv/README.md)
 
 |                    | ResNet   | ResNeXt  | SENet    |PointNet++ | HRNet | RegNetX | Res2Net |
 |--------------------|:--------:|:--------:|:--------:|:---------:|:-----:|:--------:|:-----:|
@@ -107,6 +120,9 @@ Support methods
 | ImVoteNet            | ✗        | ✗        | ✗        | ✓         | ✗     | ✗        | ✗     |
 | FCOS3D               | ✓        | ☐        | ☐        | ✗         | ☐     | ☐        | ☐     |
 | PointNet++           | ✗        | ✗        | ✗        | ✓         | ✗     | ✗        | ✗     |
+| Group-Free-3D        | ✗        | ✗        | ✗        | ✓         | ✗     | ✗        | ✗     |
+| ImVoxelNet           | ✓         | ✗        | ✗        | ✗        | ✗     | ✗        | ✗     |
+| PAConv               | ✗        | ✗        | ✗        | ✓         | ✗     | ✗        | ✗     |
 
 Other features
 - [x] [Dynamic Voxelization](configs/dynamic_voxelization/README.md)
@@ -119,7 +135,7 @@ Please refer to [getting_started.md](docs/getting_started.md) for installation.
 
 ## Get Started
 
-Please see [getting_started.md](docs/getting_started.md) for the basic usage of MMDetection3D. We provide guidance for quick run [with existing dataset](docs/1_exist_data_model.md) and [with customized dataset](docs/2_new_data_model.md) for beginners. There are also tutorials for [learning configuration systems](docs/tutorials/config.md), [adding new dataset](docs/tutorials/customize_dataset.md), [designing data pipeline](docs/tutorials/data_pipeline.md), [customizing models](docs/tutorials/customize_models.md), [customizing runtime settings](docs/tutorials/customize_runtime.md) and [Waymo dataset](docs/tutorials/waymo.md).
+Please see [getting_started.md](docs/getting_started.md) for the basic usage of MMDetection3D. We provide guidance for quick run [with existing dataset](docs/1_exist_data_model.md) and [with customized dataset](docs/2_new_data_model.md) for beginners. There are also tutorials for [learning configuration systems](docs/tutorials/config.md), [adding new dataset](docs/tutorials/customize_dataset.md), [designing data pipeline](docs/tutorials/data_pipeline.md), [customizing models](docs/tutorials/customize_models.md), [customizing runtime settings](docs/tutorials/customize_runtime.md) and [Waymo dataset](docs/datasets/waymo_det.md).
 
 Please refer to [FAQ](docs/faq.md) for frequently asked questions. When updating the version of MMDetection3D, please also check the [compatibility doc](docs/compatibility.md) to be aware of the BC-breaking updates introduced in each version.
 
@@ -148,6 +164,7 @@ We wish that the toolbox and benchmark could serve the growing research communit
 ## Projects in OpenMMLab
 
 - [MMCV](https://github.com/open-mmlab/mmcv): OpenMMLab foundational library for computer vision.
+- [MIM](https://github.com/open-mmlab/mim): MIM Installs OpenMMLab Packages.
 - [MMClassification](https://github.com/open-mmlab/mmclassification): OpenMMLab image classification toolbox and benchmark.
 - [MMDetection](https://github.com/open-mmlab/mmdetection): OpenMMLab detection toolbox and benchmark.
 - [MMDetection3D](https://github.com/open-mmlab/mmdetection3d): OpenMMLab next-generation platform for general 3D object detection.

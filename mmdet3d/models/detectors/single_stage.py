@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 from mmdet.models import DETECTORS, build_backbone, build_head, build_neck
 from .base import Base3DDetector
 
@@ -37,6 +38,19 @@ class SingleStage3DDetector(Base3DDetector):
         self.bbox_head = build_head(bbox_head)
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
+
+    def forward_dummy(self, points):
+        """Used for computing network flops.
+
+        See `mmdetection/tools/analysis_tools/get_flops.py`
+        """
+        x = self.extract_feat(points)
+        try:
+            sample_mod = self.train_cfg.sample_mod
+            outs = self.bbox_head(x, sample_mod)
+        except AttributeError:
+            outs = self.bbox_head(x)
+        return outs
 
     def extract_feat(self, points, img_metas=None):
         """Directly extract features from the backbone+neck.
